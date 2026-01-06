@@ -1633,69 +1633,20 @@
             btn.disabled = true;
             btn.classList.add('loading');
             btn.innerHTML = '<span>⏳</span> Translating...';
-            
-            const systemPrompt = `You are a Mandarin Chinese translator for Korean-English bilingual learners. 
-
-Given an English phrase, provide a JSON response with:
-1. Traditional Chinese translation (natural, conversational)
-2. Word-by-word breakdown with chunking (multi-syllable words grouped together)
-
-For each word/chunk provide:
-- "pinyin": romanization with tone marks (e.g., "zuìjìn" not "zui4jin4")
-- "hanzi": Traditional Chinese characters
-- "hanja": Sino-Korean reading in format "음(漢)" or "—" if no hanja equivalent
-- "eumhun": Korean 음훈 format "meaning 음" (e.g., "가장 최 · 가까울 근") or native Korean equivalent
-- "isCompound": true if multi-syllable word, false if single syllable
-
-Also provide 1-2 bridge items showing key Sino-Korean cognates.
-
-Respond ONLY with valid JSON, no markdown:
-{
-  "english": "original english",
-  "chinese": "full chinese sentence",
-  "words": [
-    {"pinyin": "...", "hanzi": "...", "hanja": "...", "eumhun": "...", "isCompound": true/false},
-    ...
-  ],
-  "bridges": [
-    {"cn": "詞 cí", "kr": "사(詞)", "meaning": "description", "eumhun_note": "뜻 음 explanation"},
-    ...
-  ],
-  "usage": "when to use this phrase"
-}`;
 
             try {
-                const response = await fetch('https://api.anthropic.com/v1/messages', {
+                const response = await fetch('/api/translate', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({
-                        model: 'claude-sonnet-4-20250514',
-                        max_tokens: 1500,
-                        messages: [
-                            { role: 'user', content: `Translate to Traditional Mandarin Chinese with full breakdown: "${englishText}"` }
-                        ],
-                        system: systemPrompt
-                    })
+                    body: JSON.stringify({ englishText })
                 });
                 
-                const data = await response.json();
+                const parsed = await response.json();
                 
-                if (data.error) {
-                    throw new Error(data.error.message || 'API error');
-                }
-                
-                const content = data.content[0].text;
-                
-                // Parse JSON response
-                let parsed;
-                try {
-                    // Remove any markdown code fences if present
-                    const cleanJson = content.replace(/```json\n?|\n?```/g, '').trim();
-                    parsed = JSON.parse(cleanJson);
-                } catch (e) {
-                    throw new Error('Failed to parse translation response');
+                if (parsed.error) {
+                    throw new Error(parsed.error);
                 }
                 
                 // Generate the card HTML
