@@ -1,0 +1,1897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mandarin Passion Phrases | 熱情項目對話</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&family=Noto+Sans+KR:wght@400;700&family=JetBrains+Mono:wght@400;600&family=Noto+Serif+KR:wght@400;600&display=swap');
+        
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #eee;
+            padding: 40px;
+            line-height: 1.8;
+            min-height: 100vh;
+        }
+        
+        h1 {
+            font-family: 'Noto Sans TC', sans-serif;
+            text-align: center;
+            color: #f39c12;
+            font-size: 2rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin-bottom: 40px;
+        }
+        
+        .legend {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 40px;
+            border-left: 4px solid #f39c12;
+        }
+        
+        .legend h3 {
+            color: #f39c12;
+            margin-top: 0;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 8px 0;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+        
+        .phrase-card {
+            background: rgba(255,255,255,0.03);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .phrase-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+        }
+        
+        .phrase-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .phrase-number {
+            font-size: 0.8rem;
+            color: #f39c12;
+            font-weight: 600;
+            letter-spacing: 2px;
+        }
+        
+        .audio-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .play-btn {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        
+        .play-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);
+        }
+        
+        .play-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .play-btn.playing {
+            background: linear-gradient(135deg, #27ae60, #1e8449);
+        }
+        
+        .repeat-select {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #eee;
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+        
+        .repeat-select option {
+            background: #1a1a2e;
+            color: #eee;
+        }
+        
+        .repeat-counter {
+            font-size: 0.75rem;
+            color: #7f8c8d;
+            min-width: 60px;
+        }
+        
+        .english {
+            font-size: 1.1rem;
+            color: #3498db;
+            margin-bottom: 25px;
+            font-style: italic;
+        }
+        
+        .translation-block {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            align-items: stretch;
+            margin-bottom: 20px;
+        }
+        
+        /* Single-syllable word unit */
+        .word-unit {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 8px 5px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+            min-width: 55px;
+        }
+        
+        /* Multi-syllable compound word unit */
+        .word-unit.compound {
+            background: rgba(46, 204, 113, 0.1);
+            border: 1px solid rgba(46, 204, 113, 0.3);
+            min-width: auto;
+            padding: 8px 10px;
+        }
+        
+        .word-unit.compound .pinyin {
+            letter-spacing: 2px;
+        }
+        
+        .word-unit.compound .hanzi {
+            letter-spacing: 4px;
+        }
+        
+        .pinyin {
+            font-size: 0.8rem;
+            color: #e74c3c;
+            font-weight: 600;
+            margin-bottom: 4px;
+            letter-spacing: 1px;
+            min-height: 1.2em;
+            display: flex;
+            align-items: center;
+        }
+        
+        .hanzi {
+            font-family: 'Noto Sans TC', sans-serif;
+            font-size: 1.8rem;
+            color: #fff;
+            font-weight: 700;
+            margin-bottom: 4px;
+            min-height: 2.2rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .hanja-reading {
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 0.7rem;
+            color: #2ecc71;
+            text-align: center;
+            line-height: 1.3;
+            min-height: 2.6em;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+        
+        .hanja-reading .eumhun {
+            color: #9b59b6;
+            font-family: 'Noto Serif KR', serif;
+            display: block;
+            font-size: 0.65rem;
+            margin-top: 2px;
+        }
+        
+        /* For compound words, show eumhun side by side */
+        .word-unit.compound .hanja-reading .eumhun {
+            display: inline;
+        }
+        
+        .separator {
+            color: #555;
+            font-size: 1.5rem;
+            padding: 0 2px;
+            align-self: center;
+        }
+        
+        .korean-bridge {
+            background: rgba(46, 204, 113, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            border-left: 3px solid #2ecc71;
+        }
+        
+        .korean-bridge h4 {
+            color: #2ecc71;
+            margin: 0 0 10px 0;
+            font-size: 0.85rem;
+        }
+        
+        .bridge-item {
+            margin: 10px 0;
+            padding: 8px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 6px;
+        }
+        
+        .bridge-item .cn {
+            color: #fff;
+            font-family: 'Noto Sans TC', sans-serif;
+            font-size: 1.1rem;
+        }
+        
+        .bridge-item .arrow {
+            color: #7f8c8d;
+            margin: 0 8px;
+        }
+        
+        .bridge-item .kr {
+            color: #2ecc71;
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+        
+        .bridge-item .meaning {
+            color: #bdc3c7;
+            font-size: 0.85rem;
+            margin-top: 4px;
+        }
+        
+        .bridge-item .eumhun-note {
+            color: #9b59b6;
+            font-family: 'Noto Serif KR', serif;
+            font-size: 0.8rem;
+            font-style: italic;
+            margin-top: 4px;
+        }
+        
+        .usage-context {
+            background: rgba(52, 152, 219, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            border-left: 3px solid #3498db;
+        }
+        
+        .usage-context h4 {
+            color: #3498db;
+            margin: 0 0 8px 0;
+            font-size: 0.85rem;
+        }
+        
+        .usage-context p {
+            margin: 0;
+            font-size: 0.85rem;
+            color: #bdc3c7;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: #7f8c8d;
+            font-size: 0.8rem;
+        }
+        
+        .tts-notice {
+            background: rgba(241, 196, 15, 0.1);
+            border: 1px solid rgba(241, 196, 15, 0.3);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            font-size: 0.85rem;
+            color: #f1c40f;
+        }
+        
+        /* Toggle Controls Panel */
+        .toggle-panel {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .toggle-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .toggle-icon {
+            font-size: 1rem;
+            width: 24px;
+            text-align: center;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            width: 36px;
+            height: 20px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255,255,255,0.2);
+            transition: 0.3s;
+            border-radius: 20px;
+        }
+        
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background-color: #fff;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+        
+        .toggle-switch input:checked + .toggle-slider {
+            background-color: #2ecc71;
+        }
+        
+        .toggle-switch input:checked + .toggle-slider:before {
+            transform: translateX(16px);
+        }
+        
+        /* Toggle for specific colors */
+        .toggle-group[data-toggle="chunk"] .toggle-switch input:checked + .toggle-slider {
+            background-color: #2ecc71;
+        }
+        
+        .toggle-group[data-toggle="pinyin"] .toggle-switch input:checked + .toggle-slider {
+            background-color: #e74c3c;
+        }
+        
+        .toggle-group[data-toggle="hanzi"] .toggle-switch input:checked + .toggle-slider {
+            background-color: #fff;
+        }
+        
+        .toggle-group[data-toggle="hanja"] .toggle-switch input:checked + .toggle-slider {
+            background-color: #9b59b6;
+        }
+        
+        .toggle-group[data-toggle="mono"] .toggle-switch input:checked + .toggle-slider {
+            background-color: #7f8c8d;
+        }
+        
+        /* Monochrome mode */
+        body.mono-mode .pinyin {
+            color: #ccc !important;
+        }
+        
+        body.mono-mode .hanzi {
+            color: #fff !important;
+        }
+        
+        body.mono-mode .hanja-reading {
+            color: #aaa !important;
+        }
+        
+        body.mono-mode .hanja-reading .eumhun {
+            color: #888 !important;
+        }
+        
+        body.mono-mode .word-unit.compound {
+            background: rgba(255,255,255,0.08) !important;
+            border-color: rgba(255,255,255,0.3) !important;
+        }
+        
+        body.mono-mode .korean-bridge {
+            border-left-color: #666 !important;
+            background: rgba(255,255,255,0.05) !important;
+        }
+        
+        body.mono-mode .korean-bridge h4 {
+            color: #aaa !important;
+        }
+        
+        body.mono-mode .bridge-item .kr {
+            color: #aaa !important;
+        }
+        
+        body.mono-mode .bridge-item .eumhun-note {
+            color: #888 !important;
+        }
+        
+        /* Hidden states */
+        body.hide-chunk .word-unit.compound {
+            background: rgba(0,0,0,0.2) !important;
+            border: none !important;
+        }
+        
+        body.hide-pinyin .pinyin {
+            visibility: hidden;
+        }
+        
+        body.hide-hanzi .hanzi {
+            visibility: hidden;
+        }
+        
+        body.hide-hanja .hanja-reading {
+            visibility: hidden;
+        }
+        
+        .chunk-legend {
+            background: rgba(46, 204, 113, 0.1);
+            border: 1px solid rgba(46, 204, 113, 0.3);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 30px;
+            font-size: 0.85rem;
+            color: #2ecc71;
+        }
+        
+        /* Input Section */
+        .input-section {
+            background: rgba(52, 152, 219, 0.1);
+            border: 1px solid rgba(52, 152, 219, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .input-section h3 {
+            color: #3498db;
+            margin: 0 0 15px 0;
+            font-size: 1rem;
+        }
+        
+        .input-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .input-row input[type="text"] {
+            flex: 1;
+            min-width: 250px;
+            padding: 12px 16px;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            background: rgba(0,0,0,0.3);
+            color: #fff;
+            font-family: inherit;
+            font-size: 1rem;
+        }
+        
+        .input-row input[type="text"]::placeholder {
+            color: #7f8c8d;
+        }
+        
+        .input-row input[type="text"]:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
+        .translate-btn {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .translate-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+        }
+        
+        .translate-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .translate-btn.loading {
+            background: linear-gradient(135deg, #7f8c8d, #6c7a89);
+        }
+        
+        .generated-section {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .generated-section h3 {
+            color: #f39c12;
+            margin: 0 0 20px 0;
+            font-size: 1rem;
+        }
+        
+        .error-message {
+            background: rgba(231, 76, 60, 0.1);
+            border: 1px solid rgba(231, 76, 60, 0.3);
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: #e74c3c;
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 600px) {
+            body {
+                padding: 20px;
+            }
+            
+            .phrase-header {
+                flex-direction: column;
+            }
+            
+            .audio-controls {
+                width: 100%;
+            }
+            
+            .word-unit {
+                min-width: 45px;
+                padding: 6px 4px;
+            }
+            
+            .hanzi {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>熱情項目對話 · 열정 프로젝트 대화</h1>
+    <p class="subtitle">Top 10 Advanced Conversational Phrases for Passionate Projects</p>
+    
+    <div class="tts-notice">
+        🔊 <strong>Audio:</strong> Uses browser's built-in Mandarin TTS. For best results, use Chrome/Edge. Select repeat count (1-5×) before playing.
+    </div>
+    
+    <div class="toggle-panel">
+        <div class="toggle-group" data-toggle="chunk">
+            <span class="toggle-icon">📦</span>
+            <label class="toggle-switch">
+                <input type="checkbox" id="toggle-chunk" checked onchange="toggleLayer('chunk')">
+                <span class="toggle-slider"></span>
+            </label>
+        </div>
+        <div class="toggle-group" data-toggle="pinyin">
+            <span class="toggle-icon" style="color: #e74c3c;">拼</span>
+            <label class="toggle-switch">
+                <input type="checkbox" id="toggle-pinyin" checked onchange="toggleLayer('pinyin')">
+                <span class="toggle-slider"></span>
+            </label>
+        </div>
+        <div class="toggle-group" data-toggle="hanzi">
+            <span class="toggle-icon">漢</span>
+            <label class="toggle-switch">
+                <input type="checkbox" id="toggle-hanzi" checked onchange="toggleLayer('hanzi')">
+                <span class="toggle-slider"></span>
+            </label>
+        </div>
+        <div class="toggle-group" data-toggle="hanja">
+            <span class="toggle-icon" style="color: #9b59b6;">한</span>
+            <label class="toggle-switch">
+                <input type="checkbox" id="toggle-hanja" checked onchange="toggleLayer('hanja')">
+                <span class="toggle-slider"></span>
+            </label>
+        </div>
+        <div class="toggle-group" data-toggle="mono">
+            <span class="toggle-icon">◐</span>
+            <label class="toggle-switch">
+                <input type="checkbox" id="toggle-mono" onchange="toggleLayer('mono')">
+                <span class="toggle-slider"></span>
+            </label>
+        </div>
+    </div>
+    
+    <div class="chunk-legend">
+        📦 <strong>Chunking:</strong> <span style="border: 1px solid rgba(46, 204, 113, 0.5); padding: 2px 6px; border-radius: 4px; background: rgba(46, 204, 113, 0.15);">Green-bordered boxes</span> = multi-syllable words to read as one unit. Single boxes = standalone syllables/particles.
+    </div>
+    
+    <!-- Input Section -->
+    <div class="input-section">
+        <h3>✏️ Translate Your Own Phrase</h3>
+        <div class="input-row">
+            <input type="text" id="english-input" placeholder="Enter an English phrase..." onkeypress="if(event.key==='Enter') translatePhrase()">
+            <button class="translate-btn" id="translate-btn" onclick="translatePhrase()">
+                <span>翻譯</span> Translate
+            </button>
+        </div>
+        <div id="error-container"></div>
+    </div>
+    
+    <!-- Generated Cards Container -->
+    <div id="generated-cards"></div>
+    
+    <div class="legend">
+        <h3>Reading Guide 읽기 가이드</h3>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #e74c3c;"></div>
+            <span><strong>Pinyin</strong> — Mandarin pronunciation (tones 1-4)</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #fff;"></div>
+            <span><strong>漢字 Hanzi</strong> — Traditional Chinese characters</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #2ecc71;"></div>
+            <span><strong>한자 Hanja</strong> — Sino-Korean reading (음 eum)</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #9b59b6;"></div>
+            <span><strong>訓 훈 Hun</strong> — Native Korean meaning-word (훈 hun) from 음훈 eumhun tradition</span>
+        </div>
+    </div>
+
+    <!-- PHRASE 1 -->
+    <div class="phrase-card" data-text="我最近完全沉迷在這個項目">
+        <div class="phrase-header">
+            <div class="phrase-number">PHRASE 01</div>
+            <div class="audio-controls">
+                <select class="repeat-select" data-phrase="1">
+                    <option value="1">1×</option>
+                    <option value="2">2×</option>
+                    <option value="3">3×</option>
+                    <option value="4">4×</option>
+                    <option value="5">5×</option>
+                </select>
+                <button class="play-btn" onclick="playPhrase(1)">
+                    <span class="play-icon">▶</span> Play
+                </button>
+                <span class="repeat-counter" id="counter-1"></span>
+            </div>
+        </div>
+        <div class="english">"I've been completely obsessed with this project lately."</div>
+        
+        <div class="translation-block">
+            <div class="word-unit">
+                <div class="pinyin">wǒ</div>
+                <div class="hanzi">我</div>
+                <div class="hanja-reading">아(我)<span class="eumhun">나 아</span></div>
+            </div>
+            <div class="word-unit compound">
+                <div class="pinyin">zuìjìn</div>
+                <div class="hanzi">最近</div>
+                <div class="hanja-reading">최근(最近)<span class="eumhun">가장 최 · 가까울 근</span></div>
+            </div>
+            <div class="word-unit compound">
+                <div class="pinyin">wánquán</div>
+                <div class="hanzi">完全</div>
+                <div class="hanja-reading">완전(完全)<span class="eumhun">완전할 완 · 온전할 전</span></div>
+            </div>
+            <div class="word-unit compound">
+                <div class="pinyin">chénmí</div>
+                <div class="hanzi">沉迷</div>
+                <div class="hanja-reading">침미(沈迷)<span class="eumhun">잠길 침 · 미혹할 미</span></div>
+            </div>
+            <div class="word-unit">
+                <div class="pinyin">zài</div>
+                <div class="hanzi">在</div>
+                <div class="hanja-reading">재(在)<span class="eumhun">있을 재</span></div>
+            </div>
+            <div class="word-unit compound">
+                <div class="pinyin">zhège</div>
+                <div class="hanzi">這個</div>
+                <div class="hanja-reading">—<span class="eumhun">이 · 낱 개</span></div>
+            </div>
+            <div class="word-unit compound">
+                <div class="pinyin">xiàngmù</div>
+                <div class="hanzi">項目</div>
+                <div class="hanja-reading">항목(項目)<span class="eumhun">목덜미 항 · 눈 목</span></div>
+            </div>
+        </div>
+        
+        <div class="korean-bridge">
+            <h4>🇰🇷 Hanja Bridge · 한자 연결</h4>
+            <div class="bridge-item">
+                <span class="cn">沉迷 chénmí</span>
+                <span class="arrow">→</span>
+                <span class="kr">침미(沈迷)</span>
+                <div class="meaning">"to be immersed/obsessed" — sinking into fascination</div>
+                <div class="eumhun-note">잠길 침 + 미혹할 미 = "sinking" + "bewildered" → totally absorbed</div>
+            </div>
+            <div class="bridge-item">
+                <span class="cn">項目 xiàngmù</span>
+                <span class="arrow">→</span>
+                <span class="kr">항목(項目)</span>
+                <div class="meaning">EXACT cognate! "item/project" — used identically in Korean</div>
+                <div class="eumhun-note">목덜미 항 + 눈 목 — originally "neck section" → categorical "item"</div>
+            </div>
+        </div>
+        
+        <div class="usage-context">
+            <h4>💬 When to Use</h4>
+            <p>Opening a conversation about your passion project. Shows genuine enthusiasm without boasting.</p>
+        </div>
+    </div>
+
+    <!-- PHRASE 2 -->
+    <div class="phrase-card" data-text="是什麼讓你一直堅持下去的">
+        <div class="phrase-header">
+            <div class="phrase-number">PHRASE 02</div>
+            <div class="audio-controls">
+                <select class="repeat-select" data-phrase="2">
+                    <option value="1">1×</option>
+                    <option value="2">2×</option>
+                    <option value="3">3×</option>
+                    <option value="4">4×</option>
+                    <option value="5">5×</option>
+                </select>
+                <button class="play-btn" onclick="playPhrase(2)">
+                    <span class="play-icon">▶</span> Play
+                </button>
+                <span class="repeat-counter" id="counter-2"></span>
+            </div>
+        </div>
+        <div class="english">"What drives you to keep working on this?"</div>
+        
+        <div class="translation-block">
+            <div class="word-unit">
+                <div class="pinyin">shì</div>
+                <div class="hanzi">是</div>
+                <div class="hanja-reading">시(是)<span class="eumhun">옳을 시</span></div>
+            </div>
+            <div class="word-unit compound">
+                <div class="pinyin">shénme</div>
+                <div class="hanzi">什麼</div>
+                <div class="hanja-reading">—<span class="eumhun">무엇 (what)</span></div>
+            </div>
+            <div class="word-unit">
+                <div class="pinyin">ràng</div>
+                <div class="hanzi">讓</div>
+                <div class="hanja-reading">양(讓)<span class="eumhun">사양할 양</span></div>
+            </div>
+            <div class="word-unit">
+                <div class="pinyin">nǐ</div>
+                <div class="hanzi">你</div>
+                <div class="hanja-reading">—<span class="eumhun">너 (you)</span></div>
+            </div>
+            <div class="word-unit compound">
+                <div class="pinyin">yìzhí</div>
+                <div class="hanzi">一直</div>
+                <div class="hanja-reading">일직(一直)<span class="eumhun">한 일 · 곧을 직</span></div>
+            </div>
+            <div class="word-unit compound">
+                <div class="pinyin">jiānchí</div>
+                <div class="hanzi">堅持</div>
+                <div class="hanja-reading">견지(堅持)<span class="eumhun">굳을 견 · 가질 지</span></div>
+            </div>
+            <div class="word-unit compound">
+                <div class="pinyin">xiàqù</div>
+                <div class="hanzi">下去</div>
+                <div class="hanja-reading">하거(下去)<span class="eumhun">아래 하 · 갈 거</span></div>
+            </div>
+            <div class="word-unit">
+                <div class="pinyin">de</div>
+                <div class="hanzi">的</div>
+                <div class="hanja-reading">적(的)<span class="eumhun">과녁 적</span></div>
+            </div>
+        </div>
+        
+        <div class="korean-bridge">
+            <h4>🇰🇷 Hanja Bridge · 한자 연결</h4>
+            <div class="bridge-item">
+                <span class="cn">堅持 jiānchí</span>
+                <span class="arrow">→</span>
+                <span class="kr">견지(堅持)</span>
+                <div class="meaning">EXACT cognate! 견지하다 "to persist/maintain firmly"</div>
+                <div class="eumhun-note">굳을 견 + 가질 지 = "firm" + "to hold" → steadfast persistence</div>
+            </div>
+            <div class="bridge-item">
+                <span class="cn">一直 yìzhí</span>
+                <span class="arrow">→</span>
+                <span class="kr">일직(一直) → 계속</span>
+                <div class="meaning">"continuously/always" — one straight line of time</div>
+                <div class="eumhun-note">한 일 + 곧을 직 = "one" + "straight" → unbroken continuity</div>
+            </div>
+        </div>
+        
+        <div class="usage-context">
+            <h4>💬 When to Use</h4>
+            <p>Asking someone about their deeper motivation. Shows genuine interest in their "why."</p>
+        </div>
+    </div>
+
+    <!-- PHRASE 3 -->
+    <div class="phrase-card" data-text="我想把這份熱情變成可持續的">
+        <div class="phrase-header">
+            <div class="phrase-number">PHRASE 03</div>
+            <div class="audio-controls">
+                <select class="repeat-select" data-phrase="3">
+                    <option value="1">1×</option>
+                    <option value="2">2×</option>
+                    <option value="3">3×</option>
+                    <option value="4">4×</option>
+                    <option value="5">5×</option>
+                </select>
+                <button class="play-btn" onclick="playPhrase(3)">
+                    <span class="play-icon">▶</span> Play
+                </button>
+                <span class="repeat-counter" id="counter-3"></span>
+            </div>
+        </div>
+        <div class="english">"I'm trying to turn this passion into something sustainable."</div>
+        
+        <div class="translation-block">
+            <div class="word-unit">
+                <div class="pinyin">wǒ</div>
+                <div class="hanzi">我</div>
+                <div class="hanja-reading">아(我)<span class="eumhun">나 아</span></div>
+            </div>
+            <div class="word-unit">
+                <div class="pinyin">xiǎng</div>
+                <div class="hanzi">想</div>
+                <div class="hanja-reading">상(想)<span class="eumhun">생각할 상</span></div>
+            </div>
+            <div class="word-unit">
+                <div class="pinyin">bǎ</div>
+                <div class="hanzi">把</div>
+                <div class="hanja-reading">파(把)<span class="eumhun">잡을 파</span></div>
+            </div>
+            <div class="word-unit compound">
+                <div class="pinyin">zhèfèn</div>
+                <div class="hanzi">這份</div>
+                <div class="hanja-reading">—<span class="eumhun">이 · 나눌 분</span></div>
+            </div>
+            <div class="word-unit compound">
+                <div class="pinyin">rèqíng</div>
+                <div class="hanzi">熱情</div>
+                <div class="hanja-reading">열정(熱情)<span class="eumhun">더울 열 · 뜻 정</span></div>
+            </div>
+            <div class="word-unit compound">
+                <div class="pinyin">biànchéng</div>
+                <div class="hanzi">變成</div>
+                <div class="hanja-reading">변성(變成)<span class="eumhun">변할 변 · 이룰 성</span></div>
+            </div>
+            <div class="word-unit compound">
+                <div class="pinyin">kěchíxù</div>
+                <div class="hanzi">可持續</div>
+                <div class="hanja-reading">가지속(可持續)<span class="eumhun">옳을 가 · 가질 지 · 이을 속</span></div>
+            </div>
+            <div class="word-unit">
+                <div class="pinyin">de</div>
+                <div class="hanzi">的</div>
+                <div class="hanja-reading">적(的)<span class="eumhun">과녁 적</span></div>
+            </div>
+        </div>
+        
+        <div class="korean-bridge">
+            <h4>🇰🇷 Hanja Bridge · 한자 연결</h4>
+            <div class="bridge-item">
+                <span class="cn">熱情 rèqíng</span>
+                <span class="arrow">→</span>
+                <span class="kr">열정(熱情)</span>
+                <div class="meaning">PERFECT cognate! Exact same word for "passion"</div>
+                <div class="eumhun-note">더울 열 + 뜻 정 = "hot/burning" + "feeling" → fiery emotion</div>
+            </div>
+            <div class="bridge-item">
+                <span class="cn">可持續 kěchíxù</span>
+                <span class="arrow">→</span>
+                <span class="kr">가지속(可持續) → 지속가능한</span>
+                <div class="meaning">"sustainable" — can be continued/maintained</div>
+                <div class="eumhun-note">옳을 가 + 가질 지 + 이을 속 = "can" + "hold" + "continue"</div>
+            </div>
+            <div class="bridge-item">
+                <span class="cn">變成 biànchéng</span>
+                <span class="arrow">→</span>
+                <span class="kr">변성(變成)</span>
+                <div class="meaning">"to transform into/become"</div>
+                <div class="eumhun-note">변할 변 + 이룰 성 = "change" + "accomplish" → transformation</div>
+            </div>
+        </div>
+        
+        <div class="usage-context">
+            <h4>💬 When to Use</h4>
+            <p>Discussing the business/practical side of passion. Common among entrepreneurs and creators.</p>
+        </div>
+    </div>
+
+    <!-- PHRASE 4 -->
+    <div class="phrase-card" data-text="越學越覺得自己不懂的更多">
+        <div class="phrase-header">
+            <div class="phrase-number">PHRASE 04</div>
+            <div class="audio-controls">
+                <select class="repeat-select" data-phrase="4">
+                    <option value="1">1×</option>
+                    <option value="2">2×</option>
+                    <option value="3">3×</option>
+                    <option value="4">4×</option>
+                    <option value="5">5×</option>
+                </select>
+                <button class="play-btn" onclick="playPhrase(4)">
+                    <span class="play-icon">▶</span> Play
+                </button>
+                <span class="repeat-counter" id="counter-4"></span>
+            </div>
+        </div>
+        <div class="english">"The more I learn, the more I realize I don't know."</div>
+        
+        <div class="translation-block">
+            <div class="word-unit">
+                <div class="pinyin">yuè</div>
+                <div class="hanzi">越</div>
+                <div class="hanja-reading">월(越)<span class="eumhun">넘을 월</span></div>
+            </div>
+            <div class="word-unit">
+                <div class="pinyin">xué</div>
+                <div class="hanzi">學</div>
+                <div class="hanja-reading">학(學)<span class="eumhun">배울 학</span></div>
+            </div>
+            <div class="word-unit">
+                <div class="pinyin">yuè</div>
+                <div class="hanzi">越</div>
+                <div class="hanja-reading">월(越)<span class="eumhun">넘을 월</span></div>
+            </div>
+            <div class="word-unit compound">
+                <div class="pinyin">juéde</div>
+                <div class="hanzi">覺得</div>
+                <div class="hanja-reading">각득(覺得)<span class="eumhun">깨달을 각 · 얻을 득</span></div>
+            </div>
+            <div class="word-unit compound">
+                <div class="pinyin">zìjǐ</div>
+                <div class="hanzi">自己</div>
+                <div class="hanja-reading">자기(自己)<span class="eumhun">스스로 자 · 몸 기</span></div>
+            </div>
+            <div class="word-unit compound">
+                <div class="pinyin">bùdǒng</div>
+                <div class="hanzi">不懂</div>
+                <div class="hanja-reading">불동(不懂)<span class="eumhun">아닐 불 · 알 동</span></div>
+            </div>
+            <div class="word-unit">
+                <div class="pinyin">de</div>
+                <div class="hanzi">的</div>
+                <div class="hanja-reading">적(的)<span class="eumhun">과녁 적</span></div>
+            </div>
+            <div class="word-unit compound">
+                <div class="pinyin">gèngduō</div>
+                <div class="hanzi">更多</div>
+                <div class="hanja-reading">경다(更多)<span class="eumhun">고칠 경 · 많을 다</span></div>
+            </div>
+        </div>
+        
+        <div class="korean-bridge">
+            <h4>🇰🇷 Hanja Bridge · 한자 연결</h4>
+            <div class="bridge-item">
+                <span class="cn">越...越...</span>
+                <span class="arrow">→</span>
+                <span class="kr">~하면 할수록</span>
+                <div class="meaning">"the more... the more..." comparative structure</div>
+                <div class="eumhun-note">넘을 월 — "to exceed/surpass" → escalating comparison</div>
+            </div>
+            <div class="bridge-item">
+                <span class="cn">自己 zìjǐ</span>
+                <span class="arrow">→</span>
+                <span class="kr">자기(自己)</span>
+                <div class="meaning">EXACT cognate! "oneself/self"</div>
+                <div class="eumhun-note">스스로 자 + 몸 기 = "self" + "body" → one's own person</div>
+            </div>
+            <div class="bridge-item">
+                <span class="cn">覺得 juéde</span>
+                <span class="arrow">→</span>
+                <span class="kr">각득(覺得) → 느끼다/생각하다</span>
+                <div class="meaning">"to feel/think/realize"</div>
+                <div class="eumhun-note">깨달을 각 + 얻을 득 = "awaken" + "obtain" → gain awareness</div>
+            </div>
+        </div>
+        
+        <div class="usage-context">
+            <h4>💬 When to Use</h4>
+            <p>Expressing intellectual humility. Relatable phrase that builds rapport with fellow learners.</p>
+        </div>
+    </div>
+
+    <!-- PHRASE 5 -->
+    <div class="phrase-card" data-text="我遇到瓶頸了，但在想辦法突破">
+        <div class="phrase-header">
+            <div class="phrase-number">PHRASE 05</div>
+            <div class="audio-controls">
+                <select class="repeat-select" data-phrase="5">
+                    <option value="1">1×</option>
+                    <option value="2">2×</option>
+                    <option value="3">3×</option>
+                    <option value="4">4×</option>
+                    <option value="5">5×</option>
+                </select>
+                <button class="play-btn" onclick="playPhrase(5)">
+                    <span class="play-icon">▶</span> Play
+                </button>
+                <span class="repeat-counter" id="counter-5"></span>
+            </div>
+        </div>
+        <div class="english">"I hit a wall but I'm figuring out how to break through."</div>
+        
+        <div class="translation-block">
+            <div class="word-unit">
+                <div class="pinyin">wǒ</div>
+                <div class="hanzi">我</div>
+                <div class="hanja-reading">아(我)<span class="eumhun">나 아</span></div>
+            </div>
+            <div class="word-unit compound">
+                <div class="pinyin">yùdào</div>
+                <div class="hanzi">遇到</div>
+                <div class="hanja-reading">우도(遇到)<span class="eumhun">만날 우 · 이를 도</span></div>
+            </div>
+            <div class="word-unit compound">
+                <div class="pinyin">píngjǐng</div>
+                <div class="hanzi">瓶頸</div>
+                <div class="hanja-reading">병경(甁頸)<span class="eumhun">병 병 · 목 경</span></div>
+            </div>
+            <div class="word-unit">
+                <div class="pinyin">le</div>
+                <div class="hanzi">了</div>
+                <div class="hanja-reading">료(了)<span class="eumhun">마칠 료</span></div>
+            </div>
+            <div class="separator">，</div>
+            <div class="word-unit">
+                <div class="pinyin">dàn</div>
+                <div class="hanzi">但</div>
+                <div class="hanja-reading">단(但)<span class="eumhun">다만 단</span></div>
+            </div>
+            <div class="word-unit">
+                <div class="pinyin">zài</div>
+                <div class="hanzi">在</div>
+                <div class="hanja-reading">재(在)<span class="eumhun">있을 재</span></div>
+            </div>
+            <div class="word-unit compound">
+                <div class="pinyin">xiǎng bànfǎ</div>
+                <div class="hanzi">想辦法</div>
+                <div class="hanja-reading">상판법(想辦法)<span class="eumhun">생각할 상 · 힘쓸 판 · 법 법</span></div>
+            </div>
+            <div class="word-unit compound">
+                <div class="pinyin">tūpò</div>
+                <div class="hanzi">突破</div>
+                <div class="hanja-reading">돌파(突破)<span class="eumhun">갑자기 돌 · 깨뜨릴 파</span></div>
+            </div>
+        </div>
+        
+        <div class="korean-bridge">
+            <h4>🇰🇷 Hanja Bridge · 한자 연결</h4>
+            <div class="bridge-item">
+                <span class="cn">瓶頸 píngjǐng</span>
+                <span class="arrow">→</span>
+                <span class="kr">병경(甁頸) → 병목현상</span>
+                <div class="meaning">"bottleneck" — literal: bottle + neck</div>
+                <div class="eumhun-note">병 병 + 목 경 = the narrow part that restricts flow</div>
+            </div>
+            <div class="bridge-item">
+                <span class="cn">突破 tūpò</span>
+                <span class="arrow">→</span>
+                <span class="kr">돌파(突破)</span>
+                <div class="meaning">PERFECT cognate! 돌파하다 "to break through"</div>
+                <div class="eumhun-note">갑자기 돌 + 깨뜨릴 파 = "sudden" + "break" → breakthrough</div>
+            </div>
+            <div class="bridge-item">
+                <span class="cn">想辦法 xiǎng bànfǎ</span>
+                <span class="arrow">→</span>
+                <span class="kr">상판법 → 방법을 생각하다</span>
+                <div class="meaning">"to think of a way/method"</div>
+                <div class="eumhun-note">생각할 상 + 힘쓸 판 + 법 법 = "think" + "manage" + "method"</div>
+            </div>
+        </div>
+        
+        <div class="usage-context">
+            <h4>💬 When to Use</h4>
+            <p>Discussing challenges. Shows resilience and growth mindset — great for connecting over struggles.</p>
+        </div>
+    </div>
+
+    <!-- PHRASE 6 -->
+    <div class="phrase-card" data-text="這完全改變了我的世界觀">
+        <div class="phrase-header">
+            <div class="phrase-number">PHRASE 06</div>
+            <div class="audio-controls">
+                <select class="repeat-select" data-phrase="6">
+                    <option value="1">1×</option>
+                    <option value="2">2×</option>
+                    <option value="3">3×</option>
+                    <option value="4">4×</option>
+                    <option value="5">5×</option>
+                </select>
+                <button class="play-btn" onclick="playPhrase(6)">
+                    <span class="play-icon">▶</span> Play
+                </button>
+                <span class="repeat-counter" id="counter-6"></span>
+            </div>
+        </div>
+        <div class="english">"This completely changed my perspective on everything."</div>
+        
+        <div class="translation-block">
+            <div class="word-unit">
+                <div class="pinyin">zhè</div>
+                <div class="hanzi">這</div>
+                <div class="hanja-reading">—<span class="eumhun">이 (this)</span></div>
+            </div>
+            <div class="word-unit compound">
+                <div class="pinyin">wánquán</div>
+                <div class="hanzi">完全</div>
+                <div class="hanja-reading">완전(完全)<span class="eumhun">완전할 완 · 온전할 전</span></div>
+            </div>
+            <div class="word-unit compound">
+                <div class="pinyin">gǎibiàn</div>
+                <div class="hanzi">改變</div>
+                <div class="hanja-reading">개변(改變)<span class="eumhun">고칠 개 · 변할 변</span></div>
+            </div>
+            <div class="word-unit">
+                <div class="pinyin">le</div>
+                <div class="hanzi">了</div>
+                <div class="hanja-reading">료(了)<span class="eumhun">마칠 료</span></div>
+            </div>
+            <div class="word-unit compound">
+                <div class="pinyin">wǒde</div>
+                <div class="hanzi">我的</div>
+                <div class="hanja-reading">—<span class="eumhun">나의 (my)</span></div>
+            </div>
+            <div class="word-unit compound">
+                <div class="pinyin">shìjièguān</div>
+                <div class="hanzi">世界觀</div>
+                <div class="hanja-reading">세계관(世界觀)<span class="eumhun">인간 세 · 지경 계 · 볼 관</span></div>
+            </div>
+        </div>
+        
+        <div class="korean-bridge">
+            <h4>🇰🇷 Hanja Bridge · 한자 연결</h4>
+            <div class="bridge-item">
+                <span class="cn">世界觀 shìjièguān</span>
+                <span class="arrow">→</span>
+                <span class="kr">세계관(世界觀)</span>
+                <div class="meaning">PERFECT cognate! "worldview/perspective"</div>
+                <div class="eumhun-note">인간 세 + 지경 계 + 볼 관 = "world" + "boundary" + "view"</div>
+            </div>
+            <div class="bridge-item">
+                <span class="cn">改變 gǎibiàn</span>
+                <span class="arrow">→</span>
+                <span class="kr">개변(改變)</span>
+                <div class="meaning">"to change/alter" — 변화시키다</div>
+                <div class="eumhun-note">고칠 개 + 변할 변 = "correct/fix" + "change" → to transform</div>
+            </div>
+            <div class="bridge-item">
+                <span class="cn">完全 wánquán</span>
+                <span class="arrow">→</span>
+                <span class="kr">완전(完全)</span>
+                <div class="meaning">EXACT cognate! 완전히 "completely/entirely"</div>
+                <div class="eumhun-note">완전할 완 + 온전할 전 = doubly "complete" → total/absolute</div>
+            </div>
+        </div>
+        
+        <div class="usage-context">
+            <h4>💬 When to Use</h4>
+            <p>Describing a paradigm shift. Powerful for sharing transformative experiences.</p>
+        </div>
+    </div>
+
+    <!-- PHRASE 7 -->
+    <div class="phrase-card" data-text="我在找有共同願景的合作夥伴">
+        <div class="phrase-header">
+            <div class="phrase-number">PHRASE 07</div>
+            <div class="audio-controls">
+                <select class="repeat-select" data-phrase="7">
+                    <option value="1">1×</option>
+                    <option value="2">2×</option>
+                    <option value="3">3×</option>
+                    <option value="4">4×</option>
+                    <option value="5">5×</option>
+                </select>
+                <button class="play-btn" onclick="playPhrase(7)">
+                    <span class="play-icon">▶</span> Play
+                </button>
+                <span class="repeat-counter" id="counter-7"></span>
+            </div>
+        </div>
+        <div class="english">"I'm looking for collaborators who share this vision."</div>
+        
+        <div class="translation-block">
+            <div class="word-unit">
+                <div class="pinyin">wǒ</div>
+                <div class="hanzi">我</div>
+                <div class="hanja-reading">아(我)<span class="eumhun">나 아</span></div>
+            </div>
+            <div class="word-unit compound">
+                <div class="pinyin">zàizhǎo</div>
+                <div class="hanzi">在找</div>
+                <div class="hanja-reading">—<span class="eumhun">있을 재 · 찾다</span></div>
+            </div>
+            <div class="word-unit">
+                <div class="pinyin">yǒu</div>
+                <div class="hanzi">有</div>
+                <div class="hanja-reading">유(有)<span class="eumhun">있을 유</span></div>
+            </div>
+            <div class="word-unit compound">
+                <div class="pinyin">gòngtóng</div>
+                <div class="hanzi">共同</div>
+                <div class="hanja-reading">공동(共同)<span class="eumhun">함께 공 · 한가지 동</span></div>
+            </div>
+            <div class="word-unit compound">
+                <div class="pinyin">yuànjǐng</div>
+                <div class="hanzi">願景</div>
+                <div class="hanja-reading">원경(願景)<span class="eumhun">원할 원 · 볕 경</span></div>
+            </div>
+            <div class="word-unit">
+                <div class="pinyin">de</div>
+                <div class="hanzi">的</div>
+                <div class="hanja-reading">적(的)<span class="eumhun">과녁 적</span></div>
+            </div>
+            <div class="word-unit compound">
+                <div class="pinyin">hézuò</div>
+                <div class="hanzi">合作</div>
+                <div class="hanja-reading">합작(合作)<span class="eumhun">합할 합 · 지을 작</span></div>
+            </div>
+            <div class="word-unit compound">
+                <div class="pinyin">huǒbàn</div>
+                <div class="hanzi">夥伴</div>
+                <div class="hanja-reading">화반(夥伴)<span class="eumhun">동료 화 · 짝 반</span></div>
+            </div>
+        </div>
+        
+        <div class="korean-bridge">
+            <h4>🇰🇷 Hanja Bridge · 한자 연결</h4>
+            <div class="bridge-item">
+                <span class="cn">願景 yuànjǐng</span>
+                <span class="arrow">→</span>
+                <span class="kr">원경(願景) → 비전</span>
+                <div class="meaning">"vision/aspiration" for the future</div>
+                <div class="eumhun-note">원할 원 + 볕 경 = "wish" + "scenery" → envisioned future</div>
+            </div>
+            <div class="bridge-item">
+                <span class="cn">共同 gòngtóng</span>
+                <span class="arrow">→</span>
+                <span class="kr">공동(共同)</span>
+                <div class="meaning">EXACT cognate! 공동의 "shared/common/joint"</div>
+                <div class="eumhun-note">함께 공 + 한가지 동 = "together" + "same" → in common</div>
+            </div>
+            <div class="bridge-item">
+                <span class="cn">合作 hézuò</span>
+                <span class="arrow">→</span>
+                <span class="kr">합작(合作)</span>
+                <div class="meaning">EXACT cognate! 합작하다 "to collaborate"</div>
+                <div class="eumhun-note">합할 합 + 지을 작 = "combine" + "make" → work together</div>
+            </div>
+        </div>
+        
+        <div class="usage-context">
+            <h4>💬 When to Use</h4>
+            <p>Networking and team-building. Essential for digital nomads and project leaders.</p>
+        </div>
+    </div>
+
+    <!-- PHRASE 8 -->
+    <div class="phrase-card" data-text="最難的是每天保持一致">
+        <div class="phrase-header">
+            <div class="phrase-number">PHRASE 08</div>
+            <div class="audio-controls">
+                <select class="repeat-select" data-phrase="8">
+                    <option value="1">1×</option>
+                    <option value="2">2×</option>
+                    <option value="3">3×</option>
+                    <option value="4">4×</option>
+                    <option value="5">5×</option>
+                </select>
+                <button class="play-btn" onclick="playPhrase(8)">
+                    <span class="play-icon">▶</span> Play
+                </button>
+                <span class="repeat-counter" id="counter-8"></span>
+            </div>
+        </div>
+        <div class="english">"The hardest part is staying consistent every day."</div>
+        
+        <div class="translation-block">
+            <div class="word-unit compound">
+                <div class="pinyin">zuìnán</div>
+                <div class="hanzi">最難</div>
+                <div class="hanja-reading">최난(最難)<span class="eumhun">가장 최 · 어려울 난</span></div>
+            </div>
+            <div class="word-unit">
+                <div class="pinyin">de</div>
+                <div class="hanzi">的</div>
+                <div class="hanja-reading">적(的)<span class="eumhun">과녁 적</span></div>
+            </div>
+            <div class="word-unit">
+                <div class="pinyin">shì</div>
+                <div class="hanzi">是</div>
+                <div class="hanja-reading">시(是)<span class="eumhun">옳을 시</span></div>
+            </div>
+            <div class="word-unit compound">
+                <div class="pinyin">měitiān</div>
+                <div class="hanzi">每天</div>
+                <div class="hanja-reading">매천(每天)<span class="eumhun">매양 매 · 하늘 천</span></div>
+            </div>
+            <div class="word-unit compound">
+                <div class="pinyin">bǎochí</div>
+                <div class="hanzi">保持</div>
+                <div class="hanja-reading">보지(保持)<span class="eumhun">지킬 보 · 가질 지</span></div>
+            </div>
+            <div class="word-unit compound">
+                <div class="pinyin">yīzhì</div>
+                <div class="hanzi">一致</div>
+                <div class="hanja-reading">일치(一致)<span class="eumhun">한 일 · 이를 치</span></div>
+            </div>
+        </div>
+        
+        <div class="korean-bridge">
+            <h4>🇰🇷 Hanja Bridge · 한자 연결</h4>
+            <div class="bridge-item">
+                <span class="cn">保持 bǎochí</span>
+                <span class="arrow">→</span>
+                <span class="kr">보지(保持) → 유지하다</span>
+                <div class="meaning">"to maintain/keep up"</div>
+                <div class="eumhun-note">지킬 보 + 가질 지 = "protect" + "hold" → preserve</div>
+            </div>
+            <div class="bridge-item">
+                <span class="cn">一致 yīzhì</span>
+                <span class="arrow">→</span>
+                <span class="kr">일치(一致)</span>
+                <div class="meaning">EXACT cognate! 일치하다 "consistent/uniform"</div>
+                <div class="eumhun-note">한 일 + 이를 치 = "one" + "arrive at" → arrive at oneness</div>
+            </div>
+            <div class="bridge-item">
+                <span class="cn">每天 měitiān</span>
+                <span class="arrow">→</span>
+                <span class="kr">매천(每天) → 매일</span>
+                <div class="meaning">"every day" — similar structure</div>
+                <div class="eumhun-note">매양 매 + 하늘 천 = "every" + "day/heaven"</div>
+            </div>
+        </div>
+        
+        <div class="usage-context">
+            <h4>💬 When to Use</h4>
+            <p>Discussing discipline and habits. Relatable struggle that opens deeper process conversations.</p>
+        </div>
+    </div>
+
+    <!-- PHRASE 9 -->
+    <div class="phrase-card" data-text="我真的很想聽聽你真實的反饋">
+        <div class="phrase-header">
+            <div class="phrase-number">PHRASE 09</div>
+            <div class="audio-controls">
+                <select class="repeat-select" data-phrase="9">
+                    <option value="1">1×</option>
+                    <option value="2">2×</option>
+                    <option value="3">3×</option>
+                    <option value="4">4×</option>
+                    <option value="5">5×</option>
+                </select>
+                <button class="play-btn" onclick="playPhrase(9)">
+                    <span class="play-icon">▶</span> Play
+                </button>
+                <span class="repeat-counter" id="counter-9"></span>
+            </div>
+        </div>
+        <div class="english">"I'd love to hear your honest feedback."</div>
+        
+        <div class="translation-block">
+            <div class="word-unit">
+                <div class="pinyin">wǒ</div>
+                <div class="hanzi">我</div>
+                <div class="hanja-reading">아(我)<span class="eumhun">나 아</span></div>
+            </div>
+            <div class="word-unit compound">
+                <div class="pinyin">zhēnde</div>
+                <div class="hanzi">真的</div>
+                <div class="hanja-reading">진적(眞的)<span class="eumhun">참 진 · 과녁 적</span></div>
+            </div>
+            <div class="word-unit compound">
+                <div class="pinyin">hěnxiǎng</div>
+                <div class="hanzi">很想</div>
+                <div class="hanja-reading">흔상(很想)<span class="eumhun">매우 흔 · 생각할 상</span></div>
+            </div>
+            <div class="word-unit compound">
+                <div class="pinyin">tīngtīng</div>
+                <div class="hanzi">聽聽</div>
+                <div class="hanja-reading">청청(聽聽)<span class="eumhun">들을 청 × 2</span></div>
+            </div>
+            <div class="word-unit">
+                <div class="pinyin">nǐ</div>
+                <div class="hanzi">你</div>
+                <div class="hanja-reading">—<span class="eumhun">너 (you)</span></div>
+            </div>
+            <div class="word-unit compound">
+                <div class="pinyin">zhēnshí</div>
+                <div class="hanzi">真實</div>
+                <div class="hanja-reading">진실(眞實)<span class="eumhun">참 진 · 열매 실</span></div>
+            </div>
+            <div class="word-unit">
+                <div class="pinyin">de</div>
+                <div class="hanzi">的</div>
+                <div class="hanja-reading">적(的)<span class="eumhun">과녁 적</span></div>
+            </div>
+            <div class="word-unit compound">
+                <div class="pinyin">fǎnkuì</div>
+                <div class="hanzi">反饋</div>
+                <div class="hanja-reading">반궤(反饋)<span class="eumhun">되돌릴 반 · 보낼 궤</span></div>
+            </div>
+        </div>
+        
+        <div class="korean-bridge">
+            <h4>🇰🇷 Hanja Bridge · 한자 연결</h4>
+            <div class="bridge-item">
+                <span class="cn">真實 zhēnshí</span>
+                <span class="arrow">→</span>
+                <span class="kr">진실(眞實)</span>
+                <div class="meaning">EXACT cognate! "genuine/real/true"</div>
+                <div class="eumhun-note">참 진 + 열매 실 = "true" + "fruit/substance" → authentic reality</div>
+            </div>
+            <div class="bridge-item">
+                <span class="cn">反饋 fǎnkuì</span>
+                <span class="arrow">→</span>
+                <span class="kr">반궤(反饋) → 피드백</span>
+                <div class="meaning">"feedback" — return + give</div>
+                <div class="eumhun-note">되돌릴 반 + 보낼 궤 = "return" + "send" → information sent back</div>
+            </div>
+            <div class="bridge-item">
+                <span class="cn">聽聽 tīngtīng</span>
+                <span class="arrow">→</span>
+                <span class="kr">청청 → ~좀 듣다</span>
+                <div class="meaning">Reduplication for softening — "have a little listen"</div>
+                <div class="eumhun-note">들을 청 × 2 — polite, casual reduplication pattern</div>
+            </div>
+        </div>
+        
+        <div class="usage-context">
+            <h4>💬 When to Use</h4>
+            <p>Requesting critique. The doubled 聽聽 softens the request — polite and open-minded.</p>
+        </div>
+    </div>
+
+    <!-- PHRASE 10 -->
+    <div class="phrase-card" data-text="這只是開始，還有很多可以探索的">
+        <div class="phrase-header">
+            <div class="phrase-number">PHRASE 10</div>
+            <div class="audio-controls">
+                <select class="repeat-select" data-phrase="10">
+                    <option value="1">1×</option>
+                    <option value="2">2×</option>
+                    <option value="3">3×</option>
+                    <option value="4">4×</option>
+                    <option value="5">5×</option>
+                </select>
+                <button class="play-btn" onclick="playPhrase(10)">
+                    <span class="play-icon">▶</span> Play
+                </button>
+                <span class="repeat-counter" id="counter-10"></span>
+            </div>
+        </div>
+        <div class="english">"This is just the beginning — there's so much more to explore."</div>
+        
+        <div class="translation-block">
+            <div class="word-unit">
+                <div class="pinyin">zhè</div>
+                <div class="hanzi">這</div>
+                <div class="hanja-reading">—<span class="eumhun">이 (this)</span></div>
+            </div>
+            <div class="word-unit compound">
+                <div class="pinyin">zhǐshì</div>
+                <div class="hanzi">只是</div>
+                <div class="hanja-reading">지시(只是)<span class="eumhun">다만 지 · 옳을 시</span></div>
+            </div>
+            <div class="word-unit compound">
+                <div class="pinyin">kāishǐ</div>
+                <div class="hanzi">開始</div>
+                <div class="hanja-reading">개시(開始)<span class="eumhun">열 개 · 비로소 시</span></div>
+            </div>
+            <div class="separator">，</div>
+            <div class="word-unit compound">
+                <div class="pinyin">háiyǒu</div>
+                <div class="hanzi">還有</div>
+                <div class="hanja-reading">환유(還有)<span class="eumhun">돌아올 환 · 있을 유</span></div>
+            </div>
+            <div class="word-unit compound">
+                <div class="pinyin">hěnduō</div>
+                <div class="hanzi">很多</div>
+                <div class="hanja-reading">흔다(很多)<span class="eumhun">매우 흔 · 많을 다</span></div>
+            </div>
+            <div class="word-unit compound">
+                <div class="pinyin">kěyǐ</div>
+                <div class="hanzi">可以</div>
+                <div class="hanja-reading">가이(可以)<span class="eumhun">옳을 가 · 써 이</span></div>
+            </div>
+            <div class="word-unit compound">
+                <div class="pinyin">tànsuǒ</div>
+                <div class="hanzi">探索</div>
+                <div class="hanja-reading">탐색(探索)<span class="eumhun">찾을 탐 · 찾을 색</span></div>
+            </div>
+            <div class="word-unit">
+                <div class="pinyin">de</div>
+                <div class="hanzi">的</div>
+                <div class="hanja-reading">적(的)<span class="eumhun">과녁 적</span></div>
+            </div>
+        </div>
+        
+        <div class="korean-bridge">
+            <h4>🇰🇷 Hanja Bridge · 한자 연결</h4>
+            <div class="bridge-item">
+                <span class="cn">開始 kāishǐ</span>
+                <span class="arrow">→</span>
+                <span class="kr">개시(開始)</span>
+                <div class="meaning">EXACT cognate! 시작/개시 "beginning/start"</div>
+                <div class="eumhun-note">열 개 + 비로소 시 = "open" + "begin" → to commence</div>
+            </div>
+            <div class="bridge-item">
+                <span class="cn">探索 tànsuǒ</span>
+                <span class="arrow">→</span>
+                <span class="kr">탐색(探索)</span>
+                <div class="meaning">EXACT cognate! 탐색하다 "to explore/search"</div>
+                <div class="eumhun-note">찾을 탐 + 찾을 색 = doubly "search" → thorough exploration</div>
+            </div>
+            <div class="bridge-item">
+                <span class="cn">還有 háiyǒu</span>
+                <span class="arrow">→</span>
+                <span class="kr">환유(還有) → 아직도 있다</span>
+                <div class="meaning">"there is still more/in addition"</div>
+                <div class="eumhun-note">돌아올 환 + 있을 유 = "still/return" + "have" → more remains</div>
+            </div>
+        </div>
+        
+        <div class="usage-context">
+            <h4>💬 When to Use</h4>
+            <p>Closing with forward momentum. Shows enthusiasm and invites continued engagement.</p>
+        </div>
+    </div>
+
+    <footer>
+        <p>Created for Korean-English speakers learning Mandarin | 한영 화자를 위한 중국어 학습 자료</p>
+        <p>Leverage your 한자 + 음훈 knowledge — 60%+ direct Sino-Korean cognates!</p>
+        <p style="margin-top: 10px; font-size: 0.7rem; color: #555;">v3 — Word chunking for natural sight-reading</p>
+    </footer>
+
+    <script>
+        // Track generated phrase count for unique IDs
+        let generatedCount = 100;
+        
+        // Translation function using Claude API
+        async function translatePhrase() {
+            const input = document.getElementById('english-input');
+            const btn = document.getElementById('translate-btn');
+            const errorContainer = document.getElementById('error-container');
+            const englishText = input.value.trim();
+            
+            if (!englishText) {
+                errorContainer.innerHTML = '<div class="error-message">Please enter an English phrase.</div>';
+                return;
+            }
+            
+            // Clear previous error
+            errorContainer.innerHTML = '';
+            
+            // Set loading state
+            btn.disabled = true;
+            btn.classList.add('loading');
+            btn.innerHTML = '<span>⏳</span> Translating...';
+            
+            const systemPrompt = `You are a Mandarin Chinese translator for Korean-English bilingual learners. 
+
+Given an English phrase, provide a JSON response with:
+1. Traditional Chinese translation (natural, conversational)
+2. Word-by-word breakdown with chunking (multi-syllable words grouped together)
+
+For each word/chunk provide:
+- "pinyin": romanization with tone marks (e.g., "zuìjìn" not "zui4jin4")
+- "hanzi": Traditional Chinese characters
+- "hanja": Sino-Korean reading in format "음(漢)" or "—" if no hanja equivalent
+- "eumhun": Korean 음훈 format "meaning 음" (e.g., "가장 최 · 가까울 근") or native Korean equivalent
+- "isCompound": true if multi-syllable word, false if single syllable
+
+Also provide 1-2 bridge items showing key Sino-Korean cognates.
+
+Respond ONLY with valid JSON, no markdown:
+{
+  "english": "original english",
+  "chinese": "full chinese sentence",
+  "words": [
+    {"pinyin": "...", "hanzi": "...", "hanja": "...", "eumhun": "...", "isCompound": true/false},
+    ...
+  ],
+  "bridges": [
+    {"cn": "詞 cí", "kr": "사(詞)", "meaning": "description", "eumhun_note": "뜻 음 explanation"},
+    ...
+  ],
+  "usage": "when to use this phrase"
+}`;
+
+            try {
+                const response = await fetch('https://api.anthropic.com/v1/messages', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        model: 'claude-sonnet-4-20250514',
+                        max_tokens: 1500,
+                        messages: [
+                            { role: 'user', content: `Translate to Traditional Mandarin Chinese with full breakdown: "${englishText}"` }
+                        ],
+                        system: systemPrompt
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    throw new Error(data.error.message || 'API error');
+                }
+                
+                const content = data.content[0].text;
+                
+                // Parse JSON response
+                let parsed;
+                try {
+                    // Remove any markdown code fences if present
+                    const cleanJson = content.replace(/```json\n?|\n?```/g, '').trim();
+                    parsed = JSON.parse(cleanJson);
+                } catch (e) {
+                    throw new Error('Failed to parse translation response');
+                }
+                
+                // Generate the card HTML
+                const cardHtml = generatePhraseCard(parsed, ++generatedCount);
+                
+                // Insert at top of generated cards container
+                const container = document.getElementById('generated-cards');
+                container.insertAdjacentHTML('afterbegin', cardHtml);
+                
+                // Clear input
+                input.value = '';
+                
+                // Update phrases object for TTS
+                phrases[generatedCount] = parsed.chinese;
+                
+            } catch (error) {
+                errorContainer.innerHTML = `<div class="error-message">Error: ${error.message}</div>`;
+            } finally {
+                // Reset button state
+                btn.disabled = false;
+                btn.classList.remove('loading');
+                btn.innerHTML = '<span>翻譯</span> Translate';
+            }
+        }
+        
+        // Generate phrase card HTML from parsed data
+        function generatePhraseCard(data, id) {
+            const wordsHtml = data.words.map(word => {
+                const compoundClass = word.isCompound ? ' compound' : '';
+                return `
+                    <div class="word-unit${compoundClass}">
+                        <div class="pinyin">${word.pinyin}</div>
+                        <div class="hanzi">${word.hanzi}</div>
+                        <div class="hanja-reading">${word.hanja}<span class="eumhun">${word.eumhun}</span></div>
+                    </div>`;
+            }).join('');
+            
+            const bridgesHtml = data.bridges.map(bridge => `
+                <div class="bridge-item">
+                    <span class="cn">${bridge.cn}</span>
+                    <span class="arrow">→</span>
+                    <span class="kr">${bridge.kr}</span>
+                    <div class="meaning">${bridge.meaning}</div>
+                    <div class="eumhun-note">${bridge.eumhun_note}</div>
+                </div>`).join('');
+            
+            return `
+            <div class="phrase-card" data-text="${data.chinese}" style="border-color: rgba(52, 152, 219, 0.5); margin-bottom: 20px;">
+                <div class="phrase-header">
+                    <div class="phrase-number" style="color: #3498db;">✨ YOUR PHRASE</div>
+                    <div class="audio-controls">
+                        <select class="repeat-select" data-phrase="${id}">
+                            <option value="1">1×</option>
+                            <option value="2">2×</option>
+                            <option value="3">3×</option>
+                            <option value="4">4×</option>
+                            <option value="5">5×</option>
+                        </select>
+                        <button class="play-btn" onclick="playPhrase(${id})">
+                            <span class="play-icon">▶</span> Play
+                        </button>
+                        <span class="repeat-counter" id="counter-${id}"></span>
+                    </div>
+                </div>
+                <div class="english">"${data.english}"</div>
+                
+                <div class="translation-block">
+                    ${wordsHtml}
+                </div>
+                
+                <div class="korean-bridge">
+                    <h4>🇰🇷 Hanja Bridge · 한자 연결</h4>
+                    ${bridgesHtml}
+                </div>
+                
+                <div class="usage-context">
+                    <h4>💬 When to Use</h4>
+                    <p>${data.usage}</p>
+                </div>
+            </div>`;
+        }
+        
+        // Toggle layer visibility/coloring
+        function toggleLayer(layer) {
+            const body = document.body;
+            const checkbox = document.getElementById(`toggle-${layer}`);
+            
+            if (layer === 'mono') {
+                if (checkbox.checked) {
+                    body.classList.add('mono-mode');
+                } else {
+                    body.classList.remove('mono-mode');
+                }
+            } else {
+                if (checkbox.checked) {
+                    body.classList.remove(`hide-${layer}`);
+                } else {
+                    body.classList.add(`hide-${layer}`);
+                }
+            }
+        }
+        
+        // Phrase texts for TTS
+        const phrases = {
+            1: "我最近完全沉迷在這個項目",
+            2: "是什麼讓你一直堅持下去的",
+            3: "我想把這份熱情變成可持續的",
+            4: "越學越覺得自己不懂的更多",
+            5: "我遇到瓶頸了，但在想辦法突破",
+            6: "這完全改變了我的世界觀",
+            7: "我在找有共同願景的合作夥伴",
+            8: "最難的是每天保持一致",
+            9: "我真的很想聽聽你真實的反饋",
+            10: "這只是開始，還有很多可以探索的"
+        };
+        
+        // Track playing state
+        let currentlyPlaying = null;
+        let shouldStop = false;
+        
+        async function playPhrase(phraseNum) {
+            const btn = document.querySelector(`[onclick="playPhrase(${phraseNum})"]`);
+            const counter = document.getElementById(`counter-${phraseNum}`);
+            const select = document.querySelector(`[data-phrase="${phraseNum}"]`);
+            const repeatCount = parseInt(select.value);
+            
+            // If already playing this phrase, stop it
+            if (currentlyPlaying === phraseNum) {
+                shouldStop = true;
+                speechSynthesis.cancel();
+                return;
+            }
+            
+            // Stop any currently playing phrase
+            if (currentlyPlaying !== null) {
+                shouldStop = true;
+                speechSynthesis.cancel();
+                await new Promise(resolve => setTimeout(resolve, 100));
+            }
+            
+            shouldStop = false;
+            currentlyPlaying = phraseNum;
+            
+            // Update button state
+            btn.classList.add('playing');
+            btn.innerHTML = '<span class="play-icon">⏹</span> Stop';
+            
+            const text = phrases[phraseNum];
+            
+            // Check for Chinese TTS support
+            const voices = speechSynthesis.getVoices();
+            let chineseVoice = voices.find(v => v.lang.includes('zh') && v.lang.includes('TW')) ||
+                              voices.find(v => v.lang.includes('zh-CN')) ||
+                              voices.find(v => v.lang.includes('zh'));
+            
+            for (let i = 0; i < repeatCount && !shouldStop; i++) {
+                counter.textContent = `${i + 1}/${repeatCount}`;
+                
+                await new Promise((resolve) => {
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.lang = 'zh-TW'; // Traditional Chinese
+                    utterance.rate = 0.85; // Slightly slower for learning
+                    
+                    if (chineseVoice) {
+                        utterance.voice = chineseVoice;
+                    }
+                    
+                    utterance.onend = () => resolve();
+                    utterance.onerror = () => resolve();
+                    
+                    speechSynthesis.speak(utterance);
+                });
+                
+                // Pause between repetitions
+                if (i < repeatCount - 1 && !shouldStop) {
+                    await new Promise(resolve => setTimeout(resolve, 800));
+                }
+            }
+            
+            // Reset button state
+            btn.classList.remove('playing');
+            btn.innerHTML = '<span class="play-icon">▶</span> Play';
+            counter.textContent = '';
+            currentlyPlaying = null;
+            shouldStop = false;
+        }
+        
+        // Load voices when available
+        if (speechSynthesis.onvoiceschanged !== undefined) {
+            speechSynthesis.onvoiceschanged = () => {
+                // Voices loaded
+            };
+        }
+        
+        // Preload voices
+        speechSynthesis.getVoices();
+    </script>
+</body>
+</html>
